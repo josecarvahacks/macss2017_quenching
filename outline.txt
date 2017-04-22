@@ -1,7 +1,9 @@
 Project 1: Learning Galaxy Formation from Large-scale Structure and Weak Lensing
 
+
 Project Lead: Ying Zu
 
+Github page: https://github.com/nye17/macss2017_quenching
 
 Program per session (2 hours each , total 8 hours):
 
