@@ -67,6 +67,7 @@ galaxies (provided by me) (~30 mins)
 * Mandelbaum et al. 2016 (http://adsabs.harvard.edu/abs/2016MNRAS.457.3200M)
 * Zu and Mandelbaum 2015 (http://adsabs.harvard.edu/abs/2015MNRAS.454.1161Z)
 * Zu and Mandelbaum 2016 (http://adsabs.harvard.edu/abs/2016MNRAS.457.4360Z)
+* Wright and Brainerd 2000 (http://adsabs.harvard.edu/abs/2000ApJ...534...34W)
 
 ## Are there any concepts (cosmology/statistics) that you would like the students review previous to your sessions?
 Basic MCMC concepts, basic large scale structure

@@ -1,0 +1,1 @@
+The data files contain a single column with the transverse separation in physical Mpc/h, followed by pairs of columns that have DeltaSigma and its 1-sigma uncertainty (h Msun/(physical pc)^2). The stellar mass bins for those columns are given in the proper order in the header line.
