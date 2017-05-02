@@ -30,29 +30,27 @@ def test_mock_hsmr_split(mockfile):
     lgmh = galrec['lg_halo_mass'][iscen]
     lgms = galrec['lg_stellar_mass'][iscen]
     gcolor = galrec['g-r:'][iscen]
-    lgms_bins = np.linspace(9.8, 12.0, 15)
+    lgms_bins = np.linspace(9.8, 12.0, 9)
     lgms_cens = (lgms_bins[1:] + lgms_bins[:-1]) / 2.0
     lgmh_cens_red = np.empty_like(lgms_cens)
-    lgmh_scas_red = np.empty_like(lgms_cens)
+    lgmh_err_red = np.empty_like(lgms_cens)
     lgmh_cens_blue = np.empty_like(lgms_cens)
-    lgmh_scas_blue = np.empty_like(lgms_cens)
+    lgmh_err_blue = np.empty_like(lgms_cens)
     for i in xrange(lgms_cens.size):
         sel = (lgms >= lgms_bins[i]) & (lgms < lgms_bins[i+1])
         isred = is_red(lgms[sel], gcolor[sel])
+        nred = float(np.sum(isred))
         isblue = ~isred
+        nblue = float(np.sum(isblue))
         lgmh_cens_red[i] = np.mean(lgmh[sel][isred])
-        lgmh_scas_red[i] = np.std(lgmh[sel][isred])
+        lgmh_err_red[i] = np.std(lgmh[sel][isred])/np.sqrt(nred)
         lgmh_cens_blue[i] = np.mean(lgmh[sel][isblue])
-        lgmh_scas_blue[i] = np.std(lgmh[sel][isblue])
+        lgmh_err_blue[i] = np.std(lgmh[sel][isblue])/np.sqrt(nblue)
     if has_fred:
         pass
         #
-    plt.plot(lgms_cens, lgmh_cens_red, 'r-')
-    plt.plot(lgms_cens, lgmh_cens_red+lgmh_scas_red, 'r--')
-    plt.plot(lgms_cens, lgmh_cens_red-lgmh_scas_red, 'r--')
-    plt.plot(lgms_cens, lgmh_cens_blue, 'b-')
-    plt.plot(lgms_cens, lgmh_cens_blue+lgmh_scas_blue, 'b--')
-    plt.plot(lgms_cens, lgmh_cens_blue-lgmh_scas_blue, 'b--')
+    plt.errorbar(lgms_cens, lgmh_cens_red,  yerr=lgmh_err_red, marker="o", ms=5, color="r")
+    plt.errorbar(lgms_cens, lgmh_cens_blue,  yerr=lgmh_err_blue, marker="s", ms=5, color="b")
     plt.xlabel(r"$M_*\;[M_\odot/h^2]$")
     plt.ylabel(r"$M_h\;[M_\odot/h]$")
     plt.show()
