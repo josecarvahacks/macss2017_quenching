@@ -1,0 +1,29 @@
+1. Download mock galaxy catalog from:
+
+https://www.dropbox.com/s/s53lcq142yygbwt/iHODcatalog_bolshoi.h5?dl=0
+
+2. data catalog from sdss
+http://www.astronomy.ohio-state.edu/~yingzu/data/mstar.10.0-12.00_0.010-0.074.volcom.h5
+random catalog from sdss
+http://www.astronomy.ohio-state.edu/~yingzu/data/mstar.random.10.0-12.00_0.010-0.074.volcom.h5
+
+The data columns are
+
+$ h5ls mstar.10.0-12.00_0.010-0.074.volcom.h5
+dec                      Dataset {65222}
+gcolor                   Dataset {65222}
+jackid                   Dataset {65222}
+lgms                     Dataset {65222}
+ra                       Dataset {65222}
+z                        Dataset {65222}
+
+and the random data columns are
+
+$ h5ls mstar.random.10.0-12.00_0.010-0.074.volcom.h5
+dec                      Dataset {668124}
+jackid                   Dataset {668124}
+lgms                     Dataset {668124}
+ra                       Dataset {668124}
+z                        Dataset {668124}
+
+
