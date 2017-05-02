@@ -1,0 +1,4 @@
+syn keyword CTagsImport sys plt CosmoParams Density h5py get_f_sigma_lnMs matplotlib NFW get_cosmo HSMR np RedFractionGenerator get_halofuncs SHMR_Leauthaud path os HSMR_split
+syn keyword CTagsGlobalVariable has_fred mockfile has_shmr m16path has_hmf
+syn keyword CTagsFunction read_recdict_from_hdf5 test_mock_hsmr get_density test_predict_ds test_mock_hsmr_split test_mock_hmf test_mock_shmr predict_ds read_m16 is_red read_mock test_read_m16
+

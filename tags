@@ -1,0 +1,63 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+CosmoParams	session_2/read_mock.py	/^    from zypy.zycosmo import get_halofuncs, get_cosmo, CosmoParams$/;"	kind:i
+CosmoParams	session_3/quenching.py	/^    from zypy.zycosmo import get_halofuncs, get_cosmo, CosmoParams$/;"	i
+Density	session_1/predict_ds.py	/^    from zypy.zycosmo import Density, NFW, get_cosmo$/;"	kind:i
+HSMR	session_2/read_mock.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split$/;"	kind:i
+HSMR	session_3/quenching.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split$/;"	i
+HSMR_split	session_2/read_mock.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split$/;"	kind:i
+HSMR_split	session_3/quenching.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split$/;"	i
+NFW	session_1/predict_ds.py	/^    from zypy.zycosmo import Density, NFW, get_cosmo$/;"	kind:i
+RedFractionGenerator	session_3/quenching.py	/^    from fred import RedFractionGenerator$/;"	i
+SHMR_Leauthaud	session_2/read_mock.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split$/;"	kind:i
+SHMR_Leauthaud	session_3/quenching.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split$/;"	i
+get_cosmo	session_1/predict_ds.py	/^    from zypy.zycosmo import Density, NFW, get_cosmo$/;"	kind:i
+get_cosmo	session_2/read_mock.py	/^    from zypy.zycosmo import get_halofuncs, get_cosmo, CosmoParams$/;"	kind:i
+get_cosmo	session_3/quenching.py	/^    from zypy.zycosmo import get_halofuncs, get_cosmo, CosmoParams$/;"	i
+get_density	session_1/predict_ds.py	/^def get_density(z=0.1):$/;"	kind:f	access:public
+get_f_sigma_lnMs	session_2/read_mock.py	/^    from hod.predict import get_f_sigma_lnMs$/;"	kind:i
+get_f_sigma_lnMs	session_3/quenching.py	/^    from hod.predict import get_f_sigma_lnMs$/;"	i
+get_halofuncs	session_2/read_mock.py	/^    from zypy.zycosmo import get_halofuncs, get_cosmo, CosmoParams$/;"	kind:i
+get_halofuncs	session_3/quenching.py	/^    from zypy.zycosmo import get_halofuncs, get_cosmo, CosmoParams$/;"	i
+h5py	session_2/read_mock.py	/^import h5py$/;"	kind:i
+has_fred	session_3/quenching.py	/^    has_fred = False$/;"	v
+has_fred	session_3/quenching.py	/^    has_fred = True$/;"	v
+has_hmf	session_2/read_mock.py	/^    has_hmf = False$/;"	kind:v
+has_hmf	session_2/read_mock.py	/^    has_hmf = True$/;"	kind:v
+has_shmr	session_2/read_mock.py	/^    has_shmr = False$/;"	kind:v
+has_shmr	session_2/read_mock.py	/^    has_shmr = True$/;"	kind:v
+is_red	session_3/quenching.py	/^def is_red(lgms, gcolor):$/;"	f
+m16path	session_1/read_m16.py	/^m16path = '..\/data\/M16\/'$/;"	kind:v
+matplotlib	session_1/predict_ds.py	/^import matplotlib.pyplot as plt$/;"	kind:i
+matplotlib	session_1/read_m16.py	/^import matplotlib.pyplot as plt$/;"	kind:i
+matplotlib	session_2/read_mock.py	/^import matplotlib.pyplot as plt$/;"	kind:i
+matplotlib	session_3/quenching.py	/^import matplotlib.pyplot as plt$/;"	i
+mockfile	session_2/read_mock.py	/^    mockfile = '\/Users\/ying\/Dropbox\/Public\/iHODcatalog_bolshoi.h5'$/;"	kind:v
+mockfile	session_3/quenching.py	/^    mockfile = '\/Users\/ying\/Dropbox\/Public\/iHODcatalog_bolshoi.h5'$/;"	v
+np	session_1/predict_ds.py	/^import numpy as np$/;"	kind:i
+np	session_1/read_m16.py	/^import numpy as np$/;"	kind:i
+np	session_2/read_mock.py	/^import numpy as np$/;"	kind:i
+np	session_3/quenching.py	/^import numpy as np$/;"	i
+os	session_1/read_m16.py	/^import os.path$/;"	kind:i
+path	session_1/read_m16.py	/^import os.path$/;"	kind:i
+plt	session_1/predict_ds.py	/^import matplotlib.pyplot as plt$/;"	kind:i
+plt	session_1/read_m16.py	/^import matplotlib.pyplot as plt$/;"	kind:i
+plt	session_2/read_mock.py	/^import matplotlib.pyplot as plt$/;"	kind:i
+plt	session_3/quenching.py	/^import matplotlib.pyplot as plt$/;"	i
+predict_ds	session_1/predict_ds.py	/^def predict_ds(rp, mass=1e13, c=5, rho_mean=52700242579.0, DELTA_HALO=200, h=0.7):$/;"	kind:f	access:public
+read_m16	session_1/predict_ds.py	/^from read_m16 import read_m16$/;"	kind:i
+read_m16	session_1/read_m16.py	/^def read_m16(use_red=True, mass_bin='10.0_10.4'):$/;"	kind:f	access:public
+read_mock	session_2/read_mock.py	/^def read_mock(mockfile):$/;"	kind:f	access:public
+read_mock	session_3/quenching.py	/^from read_mock import read_mock$/;"	i
+read_recdict_from_hdf5	session_2/read_mock.py	/^def read_recdict_from_hdf5(h5file):$/;"	kind:f	access:public
+sys	session_3/quenching.py	/^import sys$/;"	i
+test_mock_hmf	session_2/read_mock.py	/^def test_mock_hmf(mockfile):$/;"	kind:f	access:public
+test_mock_hsmr	session_2/read_mock.py	/^def test_mock_hsmr(mockfile):$/;"	kind:f	access:public
+test_mock_hsmr_split	session_3/quenching.py	/^def test_mock_hsmr_split(mockfile):$/;"	f
+test_mock_shmr	session_2/read_mock.py	/^def test_mock_shmr(mockfile):$/;"	kind:f	access:public
+test_predict_ds	session_1/predict_ds.py	/^def test_predict_ds(mass_bin='11.0_15.0'):$/;"	kind:f	access:public
+test_read_m16	session_1/read_m16.py	/^def test_read_m16(mass_bin="11.0_15.0"):$/;"	kind:f	access:public
