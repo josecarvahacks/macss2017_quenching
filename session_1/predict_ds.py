@@ -1,5 +1,8 @@
 # 01 May 2017 18:12:10
-from zypy.zycosmo import Density, NFW, get_cosmo
+try:
+    from zypy.zycosmo import Density, NFW, get_cosmo
+except ImportError:
+    print("Cosmology/NFW code is required.")
 from read_m16 import read_m16
 import matplotlib.pyplot as plt
 import numpy as np
