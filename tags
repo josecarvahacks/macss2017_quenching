@@ -12,7 +12,7 @@ HSMR	session_3/quenching.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSM
 HSMR_split	session_2/read_mock.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split$/;"	kind:i
 HSMR_split	session_3/quenching.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split$/;"	i
 NFW	session_1/predict_ds.py	/^    from zypy.zycosmo import Density, NFW, get_cosmo$/;"	kind:i
-RedFractionGenerator	session_3/quenching.py	/^    from fred import RedFractionGenerator$/;"	i
+RedFractionGenerator	session_3/quenching.py	/^    from hod.fred import RedFractionGenerator$/;"	i
 SHMR_Leauthaud	session_2/read_mock.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split$/;"	kind:i
 SHMR_Leauthaud	session_3/quenching.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split$/;"	i
 get_cosmo	session_1/predict_ds.py	/^    from zypy.zycosmo import Density, NFW, get_cosmo$/;"	kind:i
@@ -37,7 +37,7 @@ matplotlib	session_1/read_m16.py	/^import matplotlib.pyplot as plt$/;"	kind:i
 matplotlib	session_2/read_mock.py	/^import matplotlib.pyplot as plt$/;"	kind:i
 matplotlib	session_3/quenching.py	/^import matplotlib.pyplot as plt$/;"	i
 mockfile	session_2/read_mock.py	/^    mockfile = '\/Users\/ying\/Dropbox\/Public\/iHODcatalog_bolshoi.h5'$/;"	kind:v
-mockfile	session_3/quenching.py	/^    mockfile = '\/Users\/ying\/Dropbox\/Public\/iHODcatalog_bolshoi.h5'$/;"	v
+mockfile	session_3/quenching.py	/^    mockfile = '\/Users\/ying\/Data\/ihodmock\/standard\/iHODcatalog_bolshoi.h5'$/;"	v
 np	session_1/predict_ds.py	/^import numpy as np$/;"	kind:i
 np	session_1/read_m16.py	/^import numpy as np$/;"	kind:i
 np	session_2/read_mock.py	/^import numpy as np$/;"	kind:i
@@ -52,12 +52,15 @@ predict_ds	session_1/predict_ds.py	/^def predict_ds(rp, mass=1e13, c=5, rho_mean
 read_m16	session_1/predict_ds.py	/^from read_m16 import read_m16$/;"	kind:i
 read_m16	session_1/read_m16.py	/^def read_m16(use_red=True, mass_bin='10.0_10.4'):$/;"	kind:f	access:public
 read_mock	session_2/read_mock.py	/^def read_mock(mockfile):$/;"	kind:f	access:public
-read_mock	session_3/quenching.py	/^from read_mock import read_mock$/;"	i
+read_mock	session_3/quenching.py	/^from read_mock import read_mock, read_mock_hmf$/;"	i
+read_mock_hmf	session_2/read_mock.py	/^def read_mock_hmf(mockfile, mmin=1.e9, mmax=1.e16, nmbin=101, h=0.701):$/;"	kind:f	access:public
+read_mock_hmf	session_3/quenching.py	/^from read_mock import read_mock, read_mock_hmf$/;"	i
 read_recdict_from_hdf5	session_2/read_mock.py	/^def read_recdict_from_hdf5(h5file):$/;"	kind:f	access:public
 sys	session_3/quenching.py	/^import sys$/;"	i
 test_mock_hmf	session_2/read_mock.py	/^def test_mock_hmf(mockfile):$/;"	kind:f	access:public
 test_mock_hsmr	session_2/read_mock.py	/^def test_mock_hsmr(mockfile):$/;"	kind:f	access:public
 test_mock_hsmr_split	session_3/quenching.py	/^def test_mock_hsmr_split(mockfile):$/;"	f
 test_mock_shmr	session_2/read_mock.py	/^def test_mock_shmr(mockfile):$/;"	kind:f	access:public
+test_mock_shmr_split	session_3/quenching.py	/^def test_mock_shmr_split(mockfile):$/;"	f
 test_predict_ds	session_1/predict_ds.py	/^def test_predict_ds(mass_bin='11.0_15.0'):$/;"	kind:f	access:public
 test_read_m16	session_1/read_m16.py	/^def test_read_m16(mass_bin="11.0_15.0"):$/;"	kind:f	access:public

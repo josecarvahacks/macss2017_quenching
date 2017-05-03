@@ -45,6 +45,15 @@ def read_mock(mockfile):
     print mockdata.dtype.names
     return(mockdata)
 
+def read_mock_hmf(mockfile, mmin=1.e9, mmax=1.e16, nmbin=101, h=0.701):
+    galrec = read_mock(mockfile)
+    iscen = galrec['lg_halo_mass'] > 1
+    _Mh_arr = np.logspace(np.log10(mmin), np.log10(mmax), nmbin)
+    Mh_arr = np.sqrt(_Mh_arr[1:] * _Mh_arr[:-1])
+    dn_arr = np.histogram(galrec['lg_halo_mass'][iscen] - np.log10(h), bins=np.log10(_Mh_arr))[0]
+    dndMh_arr = dn_arr / (_Mh_arr[1:] - _Mh_arr[:-1])
+    return(Mh_arr, dndMh_arr)
+
 
 def test_mock_hmf(mockfile):
     """Check the halo mass function in the mock."""
@@ -170,5 +179,5 @@ def test_mock_hsmr(mockfile):
 if __name__ == "__main__":
     mockfile = '/Users/ying/Dropbox/Public/iHODcatalog_bolshoi.h5'
     # test_mock_hmf(mockfile)
-    # test_mock_shmr(mockfile)
-    test_mock_hsmr(mockfile)
+    test_mock_shmr(mockfile)
+    # test_mock_hsmr(mockfile)
