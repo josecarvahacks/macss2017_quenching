@@ -18,7 +18,7 @@ except ImportError:
     has_shmr = False
 
 
-def read_recdict_from_hdf5(h5file):
+def _read_recdict_from_hdf5(h5file):
     """Read a dict of record arrays from hdf5."""
     f = h5py.File(h5file, "r")
     recdict = {}
@@ -38,46 +38,60 @@ def read_recdict_from_hdf5(h5file):
     return(recdict)
 
 def read_mock(mockfile):
-    """Read mock data into a numpy.recarray"""
-    recdict = read_recdict_from_hdf5(mockfile)
+    """Read hdf5 galaxy mock data into a numpy.recarray"""
+    recdict = _read_recdict_from_hdf5(mockfile)
     mockdata = recdict['galaxy']
-    print "The columns are: "
+    print "The data columns are: "
     print mockdata.dtype.names
     return(mockdata)
 
-def read_mock_hmf(mockfile, mmin=1.e9, mmax=1.e16, nmbin=101, h=0.701):
+def read_mock_hmf(mockfile, mmin=1.e9, mmax=1.e16, nmbin=101, h=0.701, rcube=250.0):
+    """Read Halo Mass Function.
+
+    Returns
+    ---
+    Mh_arr: ndarray
+        Halo mass in Msun.
+
+    dndlnMh_arr: ndarray
+        Number density in # per lnMsun per Mpc^3.
+    """
     galrec = read_mock(mockfile)
-    iscen = galrec['lg_halo_mass'] > 1
-    _Mh_arr = np.logspace(np.log10(mmin), np.log10(mmax), nmbin)
-    Mh_arr = np.sqrt(_Mh_arr[1:] * _Mh_arr[:-1])
+    iscen = galrec['lg_halo_mass'] > 0
+    Mh_arr = np.logspace(np.log10(mmin), np.log10(mmax), nmbin)
+    wid = np.log10(Mh_arr[1] / Mh_arr[0])
+    _wid = np.log(Mh_arr[1] / Mh_arr[0])
+    # print wid
+    _Mh_arr = np.zeros(Mh_arr.size+1)
+    _Mh_arr[1:] = Mh_arr * 10**(0.5*wid)
+    _Mh_arr[0] = Mh_arr[0] / 10**(0.5*wid)
     dn_arr = np.histogram(galrec['lg_halo_mass'][iscen] - np.log10(h), bins=np.log10(_Mh_arr))[0]
-    dndMh_arr = dn_arr / (_Mh_arr[1:] - _Mh_arr[:-1])
-    return(Mh_arr, dndMh_arr)
+    # dndMh_arr = dn_arr / (_Mh_arr[1:] - _Mh_arr[:-1])
+    dndlnMh_arr = dn_arr / _wid
+    vol = (rcube / h)**3
+    dndlnMh_arr /= vol
+    return(Mh_arr, dndlnMh_arr)
 
-
-def test_mock_hmf(mockfile):
-    """Check the halo mass function in the mock."""
-    galrec = read_mock(mockfile)
-    # get central galaxies that correspond to main dark matter halos.
-    iscen = galrec['lg_halo_mass'] > 1
-    print 'total number of halos: %8d' % np.sum(iscen)
-    # halo masses are in units of Msun/h
-    plt.hist(galrec['lg_halo_mass'][iscen], bins=100, alpha=0.5)
-    # plt.hist(galrec['lg_stellar_mass'][iscen], bins=100, alpha=0.5)
+def test_mock_hmf(mockfile, rcube=250.0):
+    """Compare the halo mass function in the mock to theory prediction."""
+    Mh_arr, dndlnMh_arr = read_mock_hmf(mockfile, mmin=1.e10, mmax=1.e16, nmbin=50, h=0.7, rcube=rcube)
+    plt.plot(np.log10(Mh_arr), dndlnMh_arr, 'k-', label="Simulation")
     if has_hmf:
         # compare with theory
-        rcube = 250.0 # Mpc/h
+        # Bolshoi cosmology
         cosmo = CosmoParams(omega_M_0=0.27, sigma_8=0.82, h=0.70, omega_b_0=0.0469, n=0.95, set_flat=True)
-        M_arr, dndM_arr = get_halofuncs(z=0.1, cosmo=cosmo, DELTA_HALO=200.0, mmin=1.e9, mmax=1.e16, nmbin=100)[:2]
-        dlogm = np.log(M_arr[1]) - np.log(M_arr[0])
-        nhalo = dndM_arr * M_arr * cosmo.h * dlogm * rcube**3 / (cosmo.h)**3
-        plt.plot(np.log10(M_arr * cosmo.h), nhalo, 'r-')
+        _Mh_arr, _dndMh_arr = get_halofuncs(z=0.1, cosmo=cosmo, DELTA_HALO=200.0, mmin=1.e10, mmax=1.e16, nmbin=50)[:2]
+        _dndlnMh_arr = _dndMh_arr * _Mh_arr
+        plt.plot(np.log10(_Mh_arr), _dndlnMh_arr, 'r--', label="Theory")
+        # plt.plot(np.log10(_Mh_arr), dndlnMh_arr/_dndlnMh_arr, 'k-', label="Simulation/Theory")
+        # plt.axhline(1)
+    plt.legend(loc=1)
     plt.yscale('log')
-    plt.xlabel(r"$M_h\;[M_\odot/h]$")
-    plt.ylabel(r"$N$")
-    plt.ylim(1e0, 1e6)
+    plt.xlabel(r"$M_h\;[M_\odot]$")
+    plt.ylabel(r"$dn/d\ln M_h$")
+    # plt.ylim(0.9, 1.1)
+    plt.ylim(1e-8, 1e-1)
     plt.show()
-
 
 def test_mock_shmr(mockfile):
     """Check the stellar to halo mass relation in the mock."""
@@ -113,12 +127,13 @@ def test_mock_shmr(mockfile):
         lnmsarr = shmr.log_stellarmass_mean(np.log(mharr))
         lgmsarr = lnmsarr / np.log(10.0)
         lgmssca = f_sigma_lnMs(mharr) / np.log(10.0)
-        plt.plot(lgmh_cens, lgmsarr, 'r-')
+        plt.plot(lgmh_cens, lgmsarr, 'r-', label="Theory")
         plt.plot(lgmh_cens, lgmsarr + lgmssca , 'r--')
         plt.plot(lgmh_cens, lgmsarr - lgmssca , 'r--')
-    plt.plot(lgmh_cens, lgms_cens, 'k-')
+    plt.plot(lgmh_cens, lgms_cens, 'k-', label="Simulation")
     plt.plot(lgmh_cens, lgms_cens+lgms_scas, 'k--')
     plt.plot(lgmh_cens, lgms_cens-lgms_scas, 'k--')
+    plt.legend(loc=2)
     plt.xlabel(r"$M_h\;[M_\odot/h]$")
     plt.ylabel(r"$M_*\;[M_\odot/h^2]$")
     plt.show()
@@ -159,25 +174,27 @@ def test_mock_hsmr(mockfile):
         hsmr = HSMR(shmr, f_sigma_lnMs, dndM_arr, M_arr, lgmsmin=8.0, lgmsmax=13.0, dlgms=0.02)
         lnMh_mean, lnMh_mean2, lnMh_med, sigma_lnMh_low, sigma_lnMh_upp = hsmr.get_plnMh_at_lnMs()
         #
-        h = 0.701
+        h = 0.70
         lgms_arr = hsmr.lnMs_arr / np.log(10.0)
         lgmharr = lnMh_mean / np.log(10.0) + np.log10(h)
+        # lgmharr = lnMh_med / np.log(10.0) + np.log10(h)
         sigupp = sigma_lnMh_upp / np.log(10.0)
         siglow = sigma_lnMh_low / np.log(10.0)
-        plt.plot(lgms_arr, lgmharr, 'r-')
+        plt.plot(lgms_arr, lgmharr, 'r-', label="Theory")
         plt.plot(lgms_arr, lgmharr + sigupp , 'r--')
         plt.plot(lgms_arr, lgmharr - siglow , 'r--')
         #
-    plt.plot(lgms_cens, lgmh_cens, 'k-')
+    plt.plot(lgms_cens, lgmh_cens, 'k-', label="Simulation")
     plt.plot(lgms_cens, lgmh_cens+lgmh_scas, 'k--')
     plt.plot(lgms_cens, lgmh_cens-lgmh_scas, 'k--')
+    plt.legend(loc=2)
     plt.xlabel(r"$M_*\;[M_\odot/h^2]$")
     plt.ylabel(r"$M_h\;[M_\odot/h]$")
     plt.show()
 
 
 if __name__ == "__main__":
-    mockfile = '/Users/ying/Dropbox/Public/iHODcatalog_bolshoi.h5'
-    # test_mock_hmf(mockfile)
-    test_mock_shmr(mockfile)
+    mockfile = '/Users/ying/Data/ihodmock/standard/iHODcatalog_bolshoi.h5'
+    test_mock_hmf(mockfile)
+    # test_mock_shmr(mockfile)
     # test_mock_hsmr(mockfile)

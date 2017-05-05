@@ -1,11 +1,12 @@
 # 02 May 2017 16:39:54
 import sys
 sys.path.insert(1, '../session_2/')
+sys.path.insert(1, '../session_1/')
 try:
     from hod.fred import RedFractionGenerator
     from zypy.zycosmo import get_halofuncs, get_cosmo, CosmoParams
     from zypy.zyutil import getColors
-    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split
+    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split, HSMR_grid
     from hod.predict import get_f_sigma_lnMs
     has_fred = True
 except ImportError:
@@ -13,6 +14,7 @@ except ImportError:
 import numpy as np
 import matplotlib.pyplot as plt
 from read_mock import read_mock, read_mock_hmf
+from read_m16 import read_m16_mass
 
 
 
@@ -37,7 +39,7 @@ def test_mock_hsmr_split(mockfile):
     lgmh = galrec['lg_halo_mass'][iscen]
     lgms = galrec['lg_stellar_mass'][iscen]
     gcolor = galrec['g-r'][iscen]
-    lgms_bins = np.linspace(9.8, 12.5, 20)
+    lgms_bins = np.linspace(8.8, 12.5, 20)
     # lgms_bins = np.linspace(9.8, 12.5, 7)
     # lgms_bins = np.array([9.5, 9.8, 10.0, 10.2, 10.4, 10.6, 10.8, 11.0, 11.2, 11.4, 12.0])
     lgms_cens = (lgms_bins[1:] + lgms_bins[:-1]) / 2.0
@@ -71,7 +73,8 @@ def test_mock_hsmr_split(mockfile):
         lgmh_cens_blue[i] = np.mean(lgmh[sel][isblue])
         # lgmh_cens_blue[i] = np.median(lgmh[sel][isblue])
         lgmh_err_blue[i] = np.std(lgmh[sel][isblue])/np.sqrt(nblue)
-        if nblue > 2:
+        # if nblue > 10:
+        if nblue < -10:
             # plt.hist(gcolor[sel][isred], bins=30)
             # plt.hist(gcolor[sel][isblue], bins=30)
             #
@@ -100,10 +103,10 @@ def test_mock_hsmr_split(mockfile):
         Mh_sca = 10**lgMh_sca
         f_sigma_lnMs = get_f_sigma_lnMs(sigma_lnMs=sigma_lnMs, eta=eta, Mh_sca=Mh_sca)
         # get HMF
-        # Mh_arr, dndMh_arr = get_halofuncs(z=0.1, cosmo=cosmo, DELTA_HALO=200.0, mmin=1.e9, mmax=1.e16, nmbin=101)[:2]
-        Mh_arr, dndMh_arr = read_mock_hmf(mockfile, mmin=1.e9, mmax=1.e16, nmbin=101, h=h)[:2]
+        # Mh_arr, dndMh_arr = get_halofuncs(z=0.1, cosmo=cosmo, DELTA_HALO=200.0, mmin=1.e9, mmax=1.e16, nmbin=201)[:2]
+        Mh_arr, dndlnMh_arr = read_mock_hmf(mockfile, mmin=1.e9, mmax=1.e16, nmbin=101, h=h)[:2]
         # get stellar mass vs. halo mass grid
-        Ms_arr = np.logspace(9, 15, 301)
+        Ms_arr = np.logspace(6, 13, 301)
         #
         N_2darr = np.zeros((Ms_arr.size, Mh_arr.size))
         lnMs_mean_arr = shmr.log_stellarmass_mean(np.log(Mh_arr))
@@ -111,14 +114,8 @@ def test_mock_hsmr_split(mockfile):
         denom_arr = sigma_arr*np.sqrt(2.0*np.pi)
         lnMs_arr = np.log(Ms_arr)
         for i in xrange(Mh_arr.size):
-            # at each log bin
             N_2darr[:, i] = np.exp(-0.5*((lnMs_arr - lnMs_mean_arr[i])/sigma_arr[i])**2) / denom_arr[i]
-            jcut = np.searchsorted(Ms_arr, 1e10)
-            # _norm =  np.trapz(N_2darr[:, i], x=lnMs_arr)
-            N_2darr[:jcut, i] = 0
-            # norm =  np.trapz(N_2darr[:, i], x=lnMs_arr)
-            # N_2darr[:jcut, i] /= norm
-        if False:
+        if True:
             quenching = 'GD15'
             lgmhqc = 11.94779
             lgmhqs = 12.34138
@@ -136,8 +133,8 @@ def test_mock_hsmr_split(mockfile):
             fblue_2darr = 1.0 - fred_2darr
         Nred_2darr = N_2darr * fred_2darr
         Nblue_2darr = N_2darr * fblue_2darr
-        hsmr_red = HSMR_split(Ms_arr, Mh_arr, Nred_2darr, dndMh_arr)
-        hsmr_blue = HSMR_split(Ms_arr, Mh_arr, Nblue_2darr, dndMh_arr)
+        hsmr_red = HSMR_grid(Ms_arr, Mh_arr, Nred_2darr, dndlnMh_arr)
+        hsmr_blue = HSMR_grid(Ms_arr, Mh_arr, Nblue_2darr, dndlnMh_arr)
         # output
         lgmh_red = np.zeros(lgms_cens.size)
         lgms_red = np.zeros(lgms_cens.size)
@@ -153,6 +150,8 @@ def test_mock_hsmr_split(mockfile):
             lgms_blue[i], lgmh_blue[i] = hsmr_blue.get_Mh_at_Msbin(Ms0, Ms1)[:2]
             lgms_blue[i] = np.log10(lgms_blue[i])
             lgmh_blue[i] = lgmh_blue[i] / np.log(10.0) + np.log10(h)
+        print lgmh_red
+        print lgmh_blue
         plt.plot(lgms_red, lgmh_red, 'r--')
         plt.plot(lgms_blue, lgmh_blue, 'b--')
         # plt.plot(np.log10(Ms_arr), hsmr_red.lnMh_med/np.log(10.0) + np.log10(h), 'r:')
@@ -160,10 +159,15 @@ def test_mock_hsmr_split(mockfile):
         # plt.plot(np.log10(Ms_arr), hsmr_red.lnMh_mean/np.log(10.0) + np.log10(h), 'r:')
         # plt.plot(np.log10(Ms_arr), hsmr_blue.lnMh_mean/np.log(10.0) + np.log10(h), 'b:')
     # artificially increase the errorbar
-    lgmh_err_red += 0.05
-    lgmh_err_blue += 0.15
+    # lgmh_err_red += 0.05
+    # lgmh_err_blue += 0.15
     plt.errorbar(lgms_cens_red, lgmh_cens_red,  yerr=lgmh_err_red, marker="o", ms=5, color="r")
     plt.errorbar(lgms_cens_blue, lgmh_cens_blue,  yerr=lgmh_err_blue, marker="s", ms=5, color="b")
+    if True:
+        lgms, lgmh, lgmherr = read_m16_mass(True)
+        plt.errorbar(lgms, lgmh, yerr=lgmherr, marker="o", ms=5, color="magenta", alpha=0.2)
+        lgms, lgmh, lgmherr = read_m16_mass(False)
+        plt.errorbar(lgms, lgmh, yerr=lgmherr, marker="s", ms=5, color="cyan", alpha=0.2)
     plt.xlabel(r"$\lg\;M_*\;[M_\odot/h^2]$")
     plt.ylabel(r"$\lg\;M_h\;[M_\odot/h]$")
     plt.xlim(9.8, 12)
@@ -176,7 +180,7 @@ def test_mock_shmr_split(mockfile):
     lgmh = galrec['lg_halo_mass'][iscen]
     lgms = galrec['lg_stellar_mass'][iscen]
     gcolor = galrec['g-r'][iscen]
-    lgmh_bins = np.linspace(11.4, 15.0, 35)
+    lgmh_bins = np.linspace(10.4, 15.0, 35)
     lgmh_cens = (lgmh_bins[1:] + lgmh_bins[:-1]) / 2.0
     lgms_cens_red = np.empty_like(lgmh_cens)
     lgms_scas_red = np.empty_like(lgmh_cens)
@@ -250,37 +254,52 @@ def test_mock_fred(mockfile, mhmin=1e9, mhmax=1e15, nmhbin=35):
         plt.axvline(lgmhqc - np.log10(h))
     plt.plot(lgmh_cens, f_red, 'r--', label="Mock")
     plt.legend(loc=2)
-    # plt.plot(lgmh_cens, f_red/_f_red, 'r-', label="Mock")
-    # plt.axhline(1)
     plt.xlabel(r"$\lg\;M_h\;[M_\odot/h]$")
     plt.ylabel(r"$f_{red}$")
     plt.show()
     return(lgmh_cens, f_red)
 
-def test_grid(mockfile):
-    """Check the color-split version of halo to stellar mass relations in the mock."""
+def test_misc(mockfile):
+    """test intermedaite steps"""
     cosmo = CosmoParams(omega_M_0=0.27, sigma_8=0.82, h=0.70, omega_b_0=0.0469, n=0.95, set_flat=True)
     h = cosmo.h
     #
     galrec = read_mock(mockfile)
     iscen = galrec['lg_halo_mass'] > 0
-    # select mock central galaxies
+    # convert to Msun
     lgmh = galrec['lg_halo_mass'][iscen] - np.log10(h)
     lgms = galrec['lg_stellar_mass'][iscen]
     gcolor = galrec['g-r'][iscen]
     #
     # get HMF
-    # Mh_arr, dndMh_arr = get_halofuncs(z=0.1, cosmo=cosmo, DELTA_HALO=200.0, mmin=1.e9, mmax=1.e16, nmbin=101)[:2]
-    Mh_arr, dndMh_arr = read_mock_hmf(mockfile, mmin=1.e11, mmax=1.e15, nmbin=8, h=h)[:2]
+    # Mh_arr, _dndMh_arr = get_halofuncs(z=0.1, cosmo=cosmo, DELTA_HALO=200.0, mmin=1.e9, mmax=1.e15, nmbin=81)[:2]
+    Mh_arr, dndlnMh_arr = read_mock_hmf(mockfile, mmin=1.e9, mmax=1.e15, nmbin=81, h=h)[:2]
+    #
+    dndlgMh_arr = dndlnMh_arr * np.log(10.0)
     lgMh_arr = np.log10(Mh_arr)
     dlgMh = np.log10(Mh_arr[1]/Mh_arr[0])
     # get stellar mass vs. halo mass grid
-    Ms_arr = np.logspace(9, 13, 61)
+    Ms_arr = np.logspace(6, 13, 260)
     dlgMs = np.log10(Ms_arr[1]/Ms_arr[0])
     dlnMs = np.log(Ms_arr[1]/Ms_arr[0])
+    lnMs_arr = np.log(Ms_arr)
+    lgMs_arr = np.log10(Ms_arr)
+    # make bins that centered on lnMs_arr
+    lnMs_bin_arr = np.zeros(lnMs_arr.size + 1)
+    lnMs_bin_arr[1:] = lnMs_arr + 0.5*dlnMs
+    lnMs_bin_arr[0] = lnMs_arr[0] - 0.5*dlnMs
+    lgMs_bin_arr = lnMs_bin_arr / np.log(10.0)
     #
     N_2darr = np.zeros((Ms_arr.size, Mh_arr.size))
+    Nred_2darr = np.zeros((Ms_arr.size, Mh_arr.size))
+    Nblue_2darr = np.zeros((Ms_arr.size, Mh_arr.size))
+    pred_2darr = np.zeros((Ms_arr.size, Mh_arr.size))
+    pblue_2darr = np.zeros((Ms_arr.size, Mh_arr.size))
     _N_2darr = np.zeros((Ms_arr.size, Mh_arr.size))
+    _Nred_2darr = np.zeros((Ms_arr.size, Mh_arr.size))
+    _Nblue_2darr = np.zeros((Ms_arr.size, Mh_arr.size))
+    _pred_2darr = np.zeros((Ms_arr.size, Mh_arr.size))
+    _pblue_2darr = np.zeros((Ms_arr.size, Mh_arr.size))
     #
     if True:
         # shmr
@@ -302,53 +321,129 @@ def test_grid(mockfile):
     lnMs_mean_arr = shmr.log_stellarmass_mean(np.log(Mh_arr))
     sigma_arr = f_sigma_lnMs(Mh_arr)
     denom_arr = sigma_arr*np.sqrt(2.0*np.pi)
-    lnMs_arr = np.log(Ms_arr)
-    lgMs_arr = np.log10(Ms_arr)
-    lnMs_bin_arr = np.zeros(lnMs_arr.size + 1)
-    lnMs_bin_arr[1:] = lnMs_arr + 0.5*dlnMs
-    lnMs_bin_arr[0] = lnMs_arr[0] - 0.5*dlnMs
-    lgMs_bin_arr = lnMs_bin_arr / np.log(10.0)
+    #
     colors = getColors(Mh_arr.size)
+    set_plot_grid = False
     for i in xrange(Mh_arr.size):
+        if set_plot_grid:
+            if np.mod(i, 4) == 0 and Mh_arr[i] > 2e11 and Mh_arr[i] < 1e13:
+                print lgMh_arr[i]
+            else:
+                continue
         sel = (lgmh >= (lgMh_arr[i] - 0.5*dlgMh)) & (lgmh < (lgMh_arr[i] + 0.5*dlgMh))
         nhalo = np.sum(sel) * 1.0
-        # at each log bin
-        print lgMh_arr[i],
-        # if np.abs(lgMh_arr[i] - 11.2857142857) < 1e-1:
-        if True:
-            set_plot = True
-        else:
-            set_plot = False
+        # print nhalo,
+        # print dndlgMh_arr[i] * dlgMh * (250.0 / h)**3
         N_2darr[:, i] = np.exp(-0.5*((lnMs_arr - lnMs_mean_arr[i])/sigma_arr[i])**2) / denom_arr[i]
-        print np.trapz(N_2darr[:, i], x=lnMs_arr),
-        # plt.plot(lgMs_arr, N_2darr[:, i], ls='-', color=colors[i])
-        if set_plot:
-            # plt.plot(lgMs_arr, N_2darr[:, i] * dndMh_arr[i], ls='-', color=colors[i], lw=2, alpha=0.5)
-            plt.plot(lgMs_arr, N_2darr[:, i] * nhalo, ls='-', color=colors[i], lw=2, alpha=0.5)
-        # plt.plot(lgMs_arr, N_2darr[:, i] * dndMh_arr[i], 'r-', alpha=0.2)
-        if np.sum(sel) >= 1:
-            _N_2darr[:, i] = np.histogram(lgms[sel], bins=lgMs_bin_arr, normed=False)[0] / dlnMs / (np.sum(sel)*1.0)
-            print np.trapz(_N_2darr[:, i], x=lnMs_arr)
-            # plt.plot(lgMs_arr, _N_2darr[:, i], ls='--', color=colors[i])
-            if set_plot:
-                # plt.plot(lgMs_arr, _N_2darr[:, i] * dndMh_arr[i], ls='-', color=colors[i], lw=1, alpha=0.8)
-                plt.plot(lgMs_arr, _N_2darr[:, i] * nhalo, ls='-', color=colors[i], lw=1, alpha=0.8)
-            # plt.plot(lgMs_arr, _N_2darr[:, i] * dndMh_arr[i], 'k-', alpha=0.5)
-        if set_plot:
-            plt.xlabel(r'$M_*$')
-            # plt.yscale('log')
-            # plt.ylim(1e-30, 1e-10)
-            # plt.ylim(1e-13, 1e1)
-            plt.ylim(0, nhalo)
+        #
+        lgmhqc = 11.94779
+        muc = 0.41160
+        _mh = 10**(lgMh_arr[i] - lgmhqc)
+        f_red = 1.0 - np.exp(-_mh**muc)
+        # fred from theory
+        Nred_2darr[:, i] = N_2darr[:, i] * nhalo * dlnMs * f_red
+        pred_2darr[:, i] = N_2darr[:, i] * f_red
+        Nblue_2darr[:, i] = N_2darr[:, i] * nhalo * dlnMs * (1.0 - f_red)
+        pblue_2darr[:, i] = N_2darr[:, i] * (1.0 - f_red)
+        #
+        if set_plot_grid:
+            # plt.plot(lgMs_arr, N_2darr[:, i] * nhalo * dlnMs, ls='-', color=colors[i], lw=2, alpha=0.5)
+            # plt.plot(lgMs_arr, N_2darr[:, i] * nhalo * dlnMs * f_red, ls='-', color=colors[i], lw=3, alpha=0.5)
+            plt.plot(lgMs_arr, N_2darr[:, i] * nhalo * dlnMs * (1.-f_red), ls='-', color=colors[i], lw=3, alpha=0.5)
+        isred = is_red(lgms[sel], gcolor[sel])
+        isblue = ~isred
+        if np.sum(isred) >= 1:
+            # fred from mock
+            _N_2darr[:, i] = np.histogram(lgms[sel], bins=lgMs_bin_arr, normed=False)[0]
+            _Nred_2darr[:, i] = np.histogram(lgms[sel][isred], bins=lgMs_bin_arr, normed=False)[0]
+            _pred_2darr[:, i] = _Nred_2darr[:, i] / dlnMs / nhalo
+            _Nblue_2darr[:, i] = np.histogram(lgms[sel][isblue], bins=lgMs_bin_arr, normed=False)[0]
+            _pblue_2darr[:, i] = _Nblue_2darr[:, i] / dlnMs / nhalo
+            if set_plot_grid:
+                # plt.plot(lgMs_arr, _N_2darr[:, i], ls='-', color=colors[i], lw=1, alpha=0.8)
+                # plt.plot(lgMs_arr, _Nred_2darr[:, i], ls='--', color=colors[i], lw=1, alpha=1.0)
+                plt.plot(lgMs_arr, _Nblue_2darr[:, i], ls='--', color=colors[i], lw=1, alpha=1.0)
+    if set_plot_grid:
+        plt.xlabel(r'$M_*$')
+        plt.yscale('log')
+        plt.ylim(1, 4e3)
+        plt.show()
+        quit()
+    #
+    colors = getColors(Ms_arr.size)
+    set_plot_dist = True
+    #
+    hsmr_blue = HSMR_grid(Ms_arr, Mh_arr, pblue_2darr, dndlnMh_arr)
+    _hsmr_blue = HSMR_grid(Ms_arr, Mh_arr, _pblue_2darr, dndlnMh_arr)
+    hsmr_red = HSMR_grid(Ms_arr, Mh_arr, pred_2darr, dndlnMh_arr)
+    _hsmr_red = HSMR_grid(Ms_arr, Mh_arr, _pred_2darr, dndlnMh_arr)
+    for j in xrange(Ms_arr.size):
+        if set_plot_dist:
+            if np.mod(j, 2) == 0 and Ms_arr[j] > 9e10 and Ms_arr[j] < 1e11:
+                print np.log10(Ms_arr[j])
+            else:
+                continue
+        else:
+            # if Ms_arr[j] > 9.9e10 and Ms_arr[j] < 1e11:
+            # if Ms_arr[j] > 5.8e10 and Ms_arr[j] < 6e10:
+            # if Ms_arr[j] > 1.8e10 and Ms_arr[j] < 2e10:
+            if Ms_arr[j] > 3.8e10 and Ms_arr[j] < 4e10:
+            # if Ms_arr[j] > 4.8e10 and Ms_arr[j] < 5e10:
+            # if Ms_arr[j] > 1e10 and Ms_arr[j] < 1.1e10:
+                pass
+            else:
+                continue
+        if set_plot_dist:
+            plt.plot(lgMh_arr, Nblue_2darr[j, :], ls='-', color=colors[j], lw=3, alpha=0.5)
+            plt.plot(lgMh_arr, _Nblue_2darr[j, :], ls='--', color=colors[j], lw=1, alpha=1.0)
+        print '\n stellar mass',
+        print lgMs_arr[j]
+        print ('direct')
+        print np.sum(Nblue_2darr[j, :] * lgMh_arr) / float(np.sum(Nblue_2darr[j, :])),
+        # print np.sum(_Nblue_2darr[j, :] * lgMh_arr) / np.sum(_Nblue_2darr[j, :])
+        # print np.sum(Nred_2darr[j, :] * lgMh_arr) / np.sum(Nred_2darr[j, :]),
+        # print np.sum(_Nred_2darr[j, :] * lgMh_arr) / np.sum(_Nred_2darr[j, :])
+        #
+        print ('\n hsmr')
+        # print hsmr_blue.get_Mh_at_Msbin(Ms_arr[j]*0.99, Ms_arr[j]*1.01)[1] / np.log(10.),
+        # print _hsmr_blue.get_Mh_at_Msbin(Ms_arr[j]*0.99, Ms_arr[j]*1.01)[1] / np.log(10.)
+        print hsmr_blue.get_Mh_at_Msbin(Ms_arr[j]/10**(0.5*dlgMs), Ms_arr[j]*10**(0.5*dlgMs))[1] / np.log(10.),
+        # print _hsmr_blue.get_Mh_at_Msbin(Ms_arr[j]/10**(0.5*dlgMs), Ms_arr[j]*10**(0.5*dlgMs))[1] / np.log(10.)
+        # print hsmr_red.get_Mh_at_Msbin(Ms_arr[j]/10**(0.5*dlgMs), Ms_arr[j]*10**(0.5*dlgMs))[1] / np.log(10.),
+        # print _hsmr_red.get_Mh_at_Msbin(Ms_arr[j]/10**(0.5*dlgMs), Ms_arr[j]*10**(0.5*dlgMs))[1] / np.log(10.)
+        # print np.log10(hsmr_blue.get_Mh_at_Msbin(Ms_arr[j]/10**(0.5*dlgMs), Ms_arr[j]*10**(0.5*dlgMs))[0]) ,
+        # print np.log10(_hsmr_blue.get_Mh_at_Msbin(Ms_arr[j]/10**(0.5*dlgMs), Ms_arr[j]*10**(0.5*dlgMs))[0])
+        print '\n'
+        sel = (lgms >= (lgMs_arr[j] - 0.5*dlgMs)) & (lgms < (lgMs_arr[j] + 0.5*dlgMs))
+        isred = is_red(lgms[sel], gcolor[sel])
+        isblue = ~isred
+        if False:
+            # print np.sum(isblue)
+            plt.hist(lgmh[sel][isblue], bins=lgMh_arr, normed=False)
+            # plt.hist(lgmh[sel][isred], bins=lgMh_arr, normed=False)
+            #
+            p = hsmr_blue.get_plgMh_at_Msbin(Ms_arr[j]/10**(0.5*dlgMs), Ms_arr[j]*10**(0.5*dlgMs))*dlgMh*np.sum(isblue)
+            # p = hsmr_red.get_plgMh_at_Msbin(Ms_arr[j]/10**(0.5*dlgMs), Ms_arr[j]*10**(0.5*dlgMs))*dlgMh*np.sum(isred)
+            plt.plot(lgMh_arr, p, 'r-')
             plt.show()
+    #
+    #
+    # print hsmr_blue.get_Mh_at_Msbin(8e10, 1e11)[1] / np.log(10.)
+    # print _hsmr_blue.get_Mh_at_Msbin(8e10, 1e11)[1] / np.log(10.)
+    if set_plot_dist:
+        plt.xlabel(r'$M_h$')
+        plt.yscale('log')
+        plt.xlim(11, 15)
+        plt.ylim(1, 2e4)
+        plt.show()
+        quit()
 
 
 if __name__ == "__main__":
     # mockfile = '/Users/ying/Dropbox/Public/iHODcatalog_bolshoi.h5'
     mockfile = '/Users/ying/Data/ihodmock/standard/iHODcatalog_bolshoi.h5'
     # mockfile = '/Users/ying/Data/ihodmock/standard/iHODcatalog_mdr1.h5'
+    # test_misc(mockfile)
     # test_mock_shmr_split(mockfile)
     # test_mock_fred(mockfile)
-    # test_mock_hsmr_split(mockfile)
-    test_grid(mockfile)
-
+    test_mock_hsmr_split(mockfile)
