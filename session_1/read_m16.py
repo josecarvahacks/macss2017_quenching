@@ -53,7 +53,7 @@ def read_m16_ds(use_red=True, mass_bin='10.0_10.4'):
 def read_m16_mass(use_red):
     if use_red:
         usecols = [0, 1, 3, 4]
-        # correct for differences in mass definition
+        # correction for differences in mass definitions
         dlgms = 0.20
     else:
         usecols = [5, 6, 8, 9]
@@ -70,7 +70,9 @@ def read_m16_mass(use_red):
     # simply errors
     emhlow = lgmh - np.log10(mhlow)
     emhupp = np.log10(mhupp) - lgmh
-    errlgmh = (emhlow + emhupp) * 0.5
+    # errlgmh = (emhlow + emhupp) * 0.5
+    # (arbitrarily) take the upper errorbar
+    errlgmh = emhupp
     # out = [lgms, lgmh, emhlow, emhupp]
     out = [lgms, lgmh, errlgmh]
     return(out)
@@ -97,6 +99,6 @@ def test_read_m16_mass():
     plt.show()
 
 if __name__ == "__main__":
-    # test_read_m16_ds(mass_bin='11.0_15.0')
-    test_read_m16_mass()
-
+    test_read_m16_ds(mass_bin='11.0_15.0')
+    # test_read_m16_mass()
+    pass

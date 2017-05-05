@@ -22,14 +22,11 @@ from read_m16 import read_m16_mass
 
 
 def is_red(lgms, gcolor):
+    """Division of galaxies into red vs blue based on their relative position on
+    the color-mass diagram."""
     cut = 0.8*(lgms/10.5)**0.6
     isred = gcolor >= cut
     return(isred)
-
-def is_blue(lgms, gcolor):
-    cut = 0.8*(lgms/10.5)**0.6
-    isblue = gcolor < cut
-    return(isblue)
 
 def test_mock_hsmr_split(mockfile):
     """Check the color-split version of halo to stellar mass relations in the mock."""
@@ -40,8 +37,6 @@ def test_mock_hsmr_split(mockfile):
     lgms = galrec['lg_stellar_mass'][iscen]
     gcolor = galrec['g-r'][iscen]
     lgms_bins = np.linspace(8.8, 12.5, 20)
-    # lgms_bins = np.linspace(9.8, 12.5, 7)
-    # lgms_bins = np.array([9.5, 9.8, 10.0, 10.2, 10.4, 10.6, 10.8, 11.0, 11.2, 11.4, 12.0])
     lgms_cens = (lgms_bins[1:] + lgms_bins[:-1]) / 2.0
     # initiate arrays
     # red
@@ -61,29 +56,14 @@ def test_mock_hsmr_split(mockfile):
         isblue = ~isred
         nblue = float(np.sum(isblue))
         print nred,
-        print nblue
         lgms_cens_red[i] = np.log10(np.mean(10**lgms[sel][isred]))
-        # lgms_cens_red[i] = np.mean(lgms[sel][isred])
         lgmh_cens_red[i] = np.mean(lgmh[sel][isred])
-        # lgmh_cens_red[i] = np.median(lgmh[sel][isred])
         lgmh_err_red[i] = np.std(lgmh[sel][isred])/np.sqrt(nred)
         #
+        print nblue
         lgms_cens_blue[i] = np.log10(np.mean(10**lgms[sel][isblue]))
-        # lgms_cens_blue[i] = np.mean(lgms[sel][isblue])
         lgmh_cens_blue[i] = np.mean(lgmh[sel][isblue])
-        # lgmh_cens_blue[i] = np.median(lgmh[sel][isblue])
         lgmh_err_blue[i] = np.std(lgmh[sel][isblue])/np.sqrt(nblue)
-        # if nblue > 10:
-        if nblue < -10:
-            # plt.hist(gcolor[sel][isred], bins=30)
-            # plt.hist(gcolor[sel][isblue], bins=30)
-            #
-            plt.hist(lgmh[sel][isred], bins=30, color="red", alpha=0.5, normed=True)
-            plt.hist(lgmh[sel][isblue], bins=30, color="blue", alpha=0.5, normed=True)
-            plt.axvline(lgmh_cens_red[i], color="red")
-            plt.axvline(lgmh_cens_blue[i], color="blue")
-            plt.show()
-            pass
     if has_fred:
         cosmo = CosmoParams(omega_M_0=0.27, sigma_8=0.82, h=0.70, omega_b_0=0.0469, n=0.95, set_flat=True)
         h = cosmo.h
@@ -102,8 +82,9 @@ def test_mock_hsmr_split(mockfile):
         lgMh_sca = lgMh_1
         Mh_sca = 10**lgMh_sca
         f_sigma_lnMs = get_f_sigma_lnMs(sigma_lnMs=sigma_lnMs, eta=eta, Mh_sca=Mh_sca)
-        # get HMF
+        # get HMF from theory
         # Mh_arr, dndMh_arr = get_halofuncs(z=0.1, cosmo=cosmo, DELTA_HALO=200.0, mmin=1.e9, mmax=1.e16, nmbin=201)[:2]
+        # get HMF from simulation
         Mh_arr, dndlnMh_arr = read_mock_hmf(mockfile, mmin=1.e9, mmax=1.e16, nmbin=101, h=h)[:2]
         # get stellar mass vs. halo mass grid
         Ms_arr = np.logspace(6, 13, 301)
@@ -116,17 +97,21 @@ def test_mock_hsmr_split(mockfile):
         for i in xrange(Mh_arr.size):
             N_2darr[:, i] = np.exp(-0.5*((lnMs_arr - lnMs_mean_arr[i])/sigma_arr[i])**2) / denom_arr[i]
         if True:
+            # get fred from theory
             quenching = 'GD15'
             lgmhqc = 11.94779
             lgmhqs = 12.34138
             muc = 0.41160
             mus = 0.24031
+            # muc *= 1.2
+            # lgmhqc *= 1.1
             rfg = RedFractionGenerator(quenching=quenching, lgmhqc=lgmhqc, muc=muc,
                                        lgmhqs=lgmhqs, mus=mus)
             f_fred = rfg.make_fred_funcs(set_grid=True)[0]
             fred_2darr =  f_fred(Ms_arr, Mh_arr)
             fblue_2darr = 1.0 - fred_2darr
         else:
+            # get fred from mock
             fred = test_mock_fred(mockfile, mhmin=1.e9*h, mhmax=1.e16*h, nmhbin=101)[1]
             fred_2darr = fred.repeat(Ms_arr.size).reshape((Mh_arr.size, Ms_arr.size)).T
             fred_2darr[fred_2darr == 0.0] = 1.0
@@ -143,31 +128,22 @@ def test_mock_hsmr_split(mockfile):
         for i in xrange(lgms_cens.size):
             Ms0 = 10**lgms_bins[i]
             Ms1 = 10**lgms_bins[i+1]
-            # Ms_avg, _lnMh_mean, _lnMh_mean1, _lnMh_mean2
             lgms_red[i], lgmh_red[i] = hsmr_red.get_Mh_at_Msbin(Ms0, Ms1)[:2]
             lgms_red[i] = np.log10(lgms_red[i])
             lgmh_red[i] = lgmh_red[i] / np.log(10.0) + np.log10(h)
             lgms_blue[i], lgmh_blue[i] = hsmr_blue.get_Mh_at_Msbin(Ms0, Ms1)[:2]
             lgms_blue[i] = np.log10(lgms_blue[i])
             lgmh_blue[i] = lgmh_blue[i] / np.log(10.0) + np.log10(h)
-        print lgmh_red
-        print lgmh_blue
-        plt.plot(lgms_red, lgmh_red, 'r--')
-        plt.plot(lgms_blue, lgmh_blue, 'b--')
-        # plt.plot(np.log10(Ms_arr), hsmr_red.lnMh_med/np.log(10.0) + np.log10(h), 'r:')
-        # plt.plot(np.log10(Ms_arr), hsmr_blue.lnMh_med/np.log(10.0) + np.log10(h), 'b:')
-        # plt.plot(np.log10(Ms_arr), hsmr_red.lnMh_mean/np.log(10.0) + np.log10(h), 'r:')
-        # plt.plot(np.log10(Ms_arr), hsmr_blue.lnMh_mean/np.log(10.0) + np.log10(h), 'b:')
-    # artificially increase the errorbar
-    # lgmh_err_red += 0.05
-    # lgmh_err_blue += 0.15
-    plt.errorbar(lgms_cens_red, lgmh_cens_red,  yerr=lgmh_err_red, marker="o", ms=5, color="r")
-    plt.errorbar(lgms_cens_blue, lgmh_cens_blue,  yerr=lgmh_err_blue, marker="s", ms=5, color="b")
+        plt.plot(lgms_red, lgmh_red, 'r--', label="Red Pred")
+        plt.plot(lgms_blue, lgmh_blue, 'b--', label="Blue Pred")
+    plt.errorbar(lgms_cens_red, lgmh_cens_red,  yerr=lgmh_err_red, marker="o", ms=5, color="r", ls='None', label="Red Mock")
+    plt.errorbar(lgms_cens_blue, lgmh_cens_blue,  yerr=lgmh_err_blue, marker="s", ms=5, color="b", ls='None', label="Blue Mock")
     if True:
         lgms, lgmh, lgmherr = read_m16_mass(True)
-        plt.errorbar(lgms, lgmh, yerr=lgmherr, marker="o", ms=5, color="magenta", alpha=0.2)
+        plt.errorbar(lgms, lgmh, yerr=lgmherr, marker="o", ms=5, mfc="w", color="magenta", alpha=0.5, label="Red M16")
         lgms, lgmh, lgmherr = read_m16_mass(False)
-        plt.errorbar(lgms, lgmh, yerr=lgmherr, marker="s", ms=5, color="cyan", alpha=0.2)
+        plt.errorbar(lgms, lgmh, yerr=lgmherr, marker="s", ms=5, mfc="w", color="cyan", alpha=0.5, label="Blue M16")
+    plt.legend(loc=2)
     plt.xlabel(r"$\lg\;M_*\;[M_\odot/h^2]$")
     plt.ylabel(r"$\lg\;M_h\;[M_\odot/h]$")
     plt.xlim(9.8, 12)
@@ -442,8 +418,6 @@ def test_misc(mockfile):
 if __name__ == "__main__":
     # mockfile = '/Users/ying/Dropbox/Public/iHODcatalog_bolshoi.h5'
     mockfile = '/Users/ying/Data/ihodmock/standard/iHODcatalog_bolshoi.h5'
-    # mockfile = '/Users/ying/Data/ihodmock/standard/iHODcatalog_mdr1.h5'
-    # test_misc(mockfile)
     # test_mock_shmr_split(mockfile)
     # test_mock_fred(mockfile)
     test_mock_hsmr_split(mockfile)

@@ -196,5 +196,5 @@ def test_mock_hsmr(mockfile):
 if __name__ == "__main__":
     mockfile = '/Users/ying/Data/ihodmock/standard/iHODcatalog_bolshoi.h5'
     test_mock_hmf(mockfile)
-    # test_mock_shmr(mockfile)
-    # test_mock_hsmr(mockfile)
+    test_mock_shmr(mockfile)
+    test_mock_hsmr(mockfile)
