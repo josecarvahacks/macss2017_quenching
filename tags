@@ -60,8 +60,7 @@ plt	session_2/read_mock.py	/^import matplotlib.pyplot as plt$/;"	i
 plt	session_3/quenching.py	/^import matplotlib.pyplot as plt$/;"	i
 plt	session_4/mcmc.py	/^import matplotlib.pyplot as plt$/;"	i
 predict_ds	session_1/predict_ds.py	/^def predict_ds(rp, mass=1e13, c=5, rho_mean=52700242579.0, DELTA_HALO=200, h=0.7):$/;"	f
-predict_halomass_bimodality	session_4/mcmc.py	/^def predict_halomass_bimodality():$/;"	f
-read_data	session_4/mcmc.py	/^def read_data():$/;"	f
+predict_halomass_bimodality	session_4/mcmc.py	/^def predict_halomass_bimodality(p):$/;"	f
 read_m16_ds	session_1/predict_ds.py	/^from read_m16 import read_m16_ds$/;"	i
 read_m16_ds	session_1/read_m16.py	/^def read_m16_ds(use_red=True, mass_bin='10.0_10.4'):$/;"	f
 read_m16_mass	session_1/read_m16.py	/^def read_m16_mass(use_red):$/;"	f
@@ -70,6 +69,7 @@ read_mock	session_2/read_mock.py	/^def read_mock(mockfile):$/;"	f
 read_mock	session_3/quenching.py	/^from read_mock import read_mock, read_mock_hmf$/;"	i
 read_mock_hmf	session_2/read_mock.py	/^def read_mock_hmf(mockfile, mmin=1.e9, mmax=1.e16, nmbin=101, h=0.701, rcube=250.0):$/;"	f
 read_mock_hmf	session_3/quenching.py	/^from read_mock import read_mock, read_mock_hmf$/;"	i
+read_zm16_data	session_4/mcmc.py	/^def read_zm16_data(use_red=True):$/;"	f
 run_mcmchammer	session_4/mcmc.py	/^def run_mcmchammer():$/;"	f
 sys	session_3/quenching.py	/^import sys$/;"	i
 test_misc	session_3/quenching.py	/^def test_misc(mockfile):$/;"	f
