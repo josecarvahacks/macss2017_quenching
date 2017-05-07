@@ -1,0 +1,17 @@
+
+Mock Galaxy Catalog
+===================
+
+You can download the ZM16 mock galaxy catalog from:
+
+https://www.dropbox.com/s/yetu4pslno72q1i/iHODcatalog_bolshoi.h5?dl=0
+
+
+Halo Mass of Red/Blue Mock Central Galaxies
+===========================================
+
+halo_mass_blue.dat
+halo_mass_red.dat
+
+This is the file we will use for the model inference.
+

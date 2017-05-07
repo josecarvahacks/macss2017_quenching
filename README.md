@@ -10,12 +10,12 @@ Project Lead: Ying Zu
 ## 1. Fitting Halo Mass to Weak Lensing Profiles.
 
 * Introduce the weak lensing measurement of Mandelbaum+2016 on the average halo mass of galaxies at fixed
-stellar mass split by colors, <M_h|M_*r>_red vs. <M_h|M_*>_blue. (~20 mins)
+stellar mass split by colors, <M_h | M_*r>_red vs. <M_h | M_*>_blue. (~20 mins)
 
-* Build a model for NFW profiles at fixed M_h and concentration. (~30 mins)
+* Build a model for the weak lensing profiles of halos at fixed M_h and concentration. (~30 mins)
 
 * Vary parameters in the NFW profile on a grid and overplot the results against the measurements
-from i. (~20 mins)
+from M16. (~20 mins)
 
 * Fit individual weak lensing profiles using simple curve fitting. (~20 mins)
 
@@ -36,13 +36,11 @@ galaxies (provided by me) (~30 mins)
 
 *  Introduce the halo quenching model of Zu & Mandelbaum (2016). (~20 mins)
 
-* Implement a quenching model into the <M_h|M_*> code from session #2, and predict <M_h|M_*r>_red vs.
-    <M_h|M_*>_blue. (~30 mins)
+* Implement a quenching model into the <M_h|M_*> code from session #2, and predict <M_h | M_*r>_red vs. <M_h | M_*>_blue. (~30 mins)
 
 * Measure <M_h|M_*r>_red vs. <M_h|M_*>_blue from the mock catalog. (~20 mins)
 
-* Vary parameters in the quenching model on a grid and overplot the results against the measurements
-    from iii. (~30 mins)
+* Vary parameters in the quenching model on a grid and overplot the results against the measurements from above. (~30 mins)
 
 
 ## 4. Model inference.
@@ -51,8 +49,7 @@ galaxies (provided by me) (~30 mins)
 
 * Try different quenching models and repeat the analysis. (~ 30 mins)
 
-* Comment on model selection, quenching of satellite population, extra constraints from correlation
-    functions, etc.
+* Comment on model selection, quenching of satellite population, extra constraints from correlation functions, etc.
 
 # Requirements (software, bibliography):
 

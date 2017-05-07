@@ -1,1 +1,18 @@
+Weak Lensing Profiles around Locally Brightest Galaxies (LBGs):
+================================================================
+
+planck_lbg.ds.blue.rebinned.out
+planck_lbg.ds.blue.out
+planck_lbg.ds.red.out
+
 The data files contain a single column with the transverse separation in physical Mpc/h, followed by pairs of columns that have DeltaSigma and its 1-sigma uncertainty (h Msun/(physical pc)^2). The stellar mass bins for those columns are given in the proper order in the header line.
+
+* use 'read_m16_ds' function to read those files.
+
+
+Halo Mass of LBGs Measured from Weak Lensing:
+=============================================
+
+bootmass_1s_colorsplit_corr.txt
+
+* use 'read_m16_mass' function to read those files.
