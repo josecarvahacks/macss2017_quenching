@@ -1,16 +1,12 @@
 # 01 May 2017 18:12:10
-try:
-    from zypy.zycosmo import Density, NFW, get_cosmo
-    has_nfw = True
-except ImportError:
-    print("Cosmology/NFW code is required.")
-    has_nfw = False
 from read_m16 import read_m16_ds
 import matplotlib.pyplot as plt
 import numpy as np
+from nfw import NFW
 
+has_nfw = True
 
-def predict_ds(rp, mass=1e13, c=5, rho_mean=52700242579.0, DELTA_HALO=200, h=0.7):
+def predict_ds(rp, mass=1e13, c=6, rho_mean=52700242579.0, DELTA_HALO=200, h=0.7):
     nfw = NFW(mass, c, rho_mean, DELTA_HALO)
     ds = nfw.DelSig(rp/h)
     # [Msun/Mpc^2] to [h Msun/pc^2]
@@ -18,6 +14,8 @@ def predict_ds(rp, mass=1e13, c=5, rho_mean=52700242579.0, DELTA_HALO=200, h=0.7
     return(ds)
 
 def get_density(z=0.1):
+    from zypy.zycosmo import Density, get_cosmo
+    # 52700242579.0 Msun/Mpc^3 at z=0.1
     cosmo = get_cosmo('PLANCK2')
     den = Density(cosmo)
     # Density unit in solar masses per cubic (physical) Mpc.
