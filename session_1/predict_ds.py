@@ -36,7 +36,7 @@ def test_predict_ds(mass_bin='11.0_15.0'):
         plt.errorbar(rp, ds, yerr=ds_err, marker=marker, ms=5, ls="--", lw=0.5, color=color, label=label)
     _rp = np.logspace(-1.5, 0.8, 20)
     if has_nfw:
-        lgmass_list = [11.5, 12, 12.5, 13, 13.5, 14]
+        lgmass_list = [12, 12.5, 13, 13.5, 14]
         nlgmass = len(lgmass_list) * 1.0
         for i, lgmass in enumerate(lgmass_list):
             _ds =  predict_ds(_rp, 10**lgmass)
