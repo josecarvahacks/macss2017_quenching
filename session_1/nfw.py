@@ -3,10 +3,6 @@ import numpy as np
 from scipy import special
 from scipy.interpolate import InterpolatedUnivariateSpline as spline1d
 
-""" Eeverything you need to know about the infamous gang of Navarro-Frenk-White.
-"""
-
-
 class NFW(object):
 
     """ Define an NFW halo with mass, concentration, background density and
@@ -76,14 +72,6 @@ class NFW(object):
         """
         return(4.0*np.pi*rho_0*self.r_s**3*(np.log(1.+self.c)-self.c/(
             1.+self.c)))
-
-    def _total_mass_unnormed(self, r_max, cg2c=1.0):
-        """ this is for draw galaxies with a different concentration parameter.
-        """
-        _r_s = self.r_s/cg2c  # r_s corresponds to galaxy distribution.
-        _rsum = _r_s + r_max
-        _m_g = np.log(_rsum/_r_s) - r_max/_rsum
-        return(_m_g)
 
     def _r_vir(self):
         """ Returns the virial radius.
