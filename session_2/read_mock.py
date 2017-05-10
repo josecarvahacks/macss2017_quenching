@@ -169,7 +169,11 @@ def test_mock_hsmr(mockfile):
         f_sigma_lnMs = get_f_sigma_lnMs(sigma_lnMs=sigma_lnMs, eta=eta, Mh_sca=Mh_sca)
         #
         cosmo = CosmoParams(omega_M_0=0.27, sigma_8=0.82, h=0.70, omega_b_0=0.0469, n=0.95, set_flat=True)
-        M_arr, dndM_arr = get_halofuncs(z=0.1, cosmo=cosmo, DELTA_HALO=200.0, mmin=1.e9, mmax=1.e16, nmbin=100)[:2]
+        M_arr, dndM_arr = get_halofuncs(z=0.1, cosmo=cosmo, DELTA_HALO=200.0, mmin=1.e9, mmax=1.e16, nmbin=300)[:2]
+        if False:
+            lnMh_arr = np.log(M_arr)
+            dndlnMh_arr = dndM_arr * M_arr
+            np.savetxt('hmf.dat', np.vstack((lnMh_arr, dndlnMh_arr)).T)
         # HSMR
         hsmr = HSMR(shmr, f_sigma_lnMs, dndM_arr, M_arr, lgmsmin=8.0, lgmsmax=13.0, dlgms=0.02)
         lnMh_mean, lnMh_mean2, lnMh_med, sigma_lnMh_low, sigma_lnMh_upp = hsmr.get_plnMh_at_lnMs()
@@ -195,6 +199,6 @@ def test_mock_hsmr(mockfile):
 
 if __name__ == "__main__":
     mockfile = '/Users/ying/Data/ihodmock/standard/iHODcatalog_bolshoi.h5'
-    test_mock_hmf(mockfile)
-    test_mock_shmr(mockfile)
+    # test_mock_hmf(mockfile)
+    # test_mock_shmr(mockfile)
     test_mock_hsmr(mockfile)

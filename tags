@@ -13,19 +13,27 @@ HSMR	session_3/quenching.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSM
 HSMR_grid	session_3/quenching.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split, HSMR_grid$/;"	i
 HSMR_split	session_2/read_mock.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split$/;"	i
 HSMR_split	session_3/quenching.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split, HSMR_grid$/;"	i
+Mh_arr	session_2/shmr.py	/^    Mh_arr = np.logspace(10, 16, 121)$/;"	v
 NFW	session_1/nfw.py	/^class NFW(object):$/;"	c
 NFW	session_1/predict_ds.py	/^from nfw import NFW$/;"	i
 RedFractionGenerator	session_3/quenching.py	/^    from hod.fred import RedFractionGenerator$/;"	i
+SHMR	session_2/prob2d.py	/^from shmr import SHMR$/;"	i
+SHMR	session_2/shmr.py	/^class SHMR(object):$/;"	c
 SHMR_Leauthaud	session_2/read_mock.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split$/;"	i
 SHMR_Leauthaud	session_3/quenching.py	/^    from hod.shmr import SHMR_Leauthaud, HSMR, HSMR_split, HSMR_grid$/;"	i
 __init__	session_1/nfw.py	/^    def __init__(self, mass, c, rho_mean, DELTA_HALO=200.0):$/;"	m	class:NFW
+__init__	session_2/shmr.py	/^    def __init__(self, Mh_1=1.256e12, Ms_0=2.032e10, beta=0.33272, delta=0.440,$/;"	m	class:SHMR
 __str__	session_1/nfw.py	/^    def __str__(self):$/;"	m	class:NFW	file:
 _glt_or_ggt	session_1/nfw.py	/^    def _glt_or_ggt(self, x):$/;"	m	class:NFW
+_inverse_lgMh	session_2/shmr.py	/^    def _inverse_lgMh(self):$/;"	m	class:SHMR
+_lgMh	session_2/shmr.py	/^    def _lgMh(self, Ms, check_boundary=True):$/;"	m	class:SHMR
 _mass	session_1/nfw.py	/^    def _mass(self, rho_0=1.0):$/;"	m	class:NFW
 _profile	session_1/nfw.py	/^    def _profile(self, r, rho_0=1.0):$/;"	m	class:NFW
 _r_vir	session_1/nfw.py	/^    def _r_vir(self):$/;"	m	class:NFW
 _read_recdict_from_hdf5	session_2/read_mock.py	/^def _read_recdict_from_hdf5(h5file):$/;"	f
 emcee	session_4/mcmc.py	/^import emcee$/;"	i
+extent	session_2/prob2d.py	/^    extent = [lgmhmin, lgmhmax, lgmsmin, lgmsmax]$/;"	v
+gaussian	session_2/prob2d.py	/^def gaussian(x, mean, sigma):$/;"	f
 getColors	session_3/quenching.py	/^    from zypy.zyutil import getColors$/;"	i
 get_cosmo	session_1/predict_ds.py	/^    from zypy.zycosmo import Density, get_cosmo$/;"	i
 get_cosmo	session_2/read_mock.py	/^    from zypy.zycosmo import get_halofuncs, get_cosmo, CosmoParams$/;"	i
@@ -35,6 +43,7 @@ get_f_sigma_lnMs	session_2/read_mock.py	/^    from hod.predict import get_f_sigm
 get_f_sigma_lnMs	session_3/quenching.py	/^    from hod.predict import get_f_sigma_lnMs$/;"	i
 get_halofuncs	session_2/read_mock.py	/^    from zypy.zycosmo import get_halofuncs, get_cosmo, CosmoParams$/;"	i
 get_halofuncs	session_3/quenching.py	/^    from zypy.zycosmo import get_halofuncs, get_cosmo, CosmoParams$/;"	i
+get_prob2d	session_2/prob2d.py	/^def get_prob2d(sigma_lnMs=0.49730, hmfdata="..\/data\/hmf.dat"):$/;"	f
 h5py	session_2/read_mock.py	/^import h5py$/;"	i
 has_fred	session_3/quenching.py	/^    has_fred = False$/;"	v
 has_fred	session_3/quenching.py	/^    has_fred = True$/;"	v
@@ -43,13 +52,24 @@ has_hmf	session_2/read_mock.py	/^    has_hmf = True$/;"	v
 has_nfw	session_1/predict_ds.py	/^has_nfw = True$/;"	v
 has_shmr	session_2/read_mock.py	/^    has_shmr = False$/;"	v
 has_shmr	session_2/read_mock.py	/^    has_shmr = True$/;"	v
+im	session_2/prob2d.py	/^    im = plt.imshow(p2d_arr, cmap='rainbow', origin='lower', extent=extent)$/;"	v
 is_red	session_3/quenching.py	/^def is_red(lgms, gcolor):$/;"	f
+lgMh_arr	session_2/shmr.py	/^    lgMh_arr = lnMh_arr \/ np.log(10.0)$/;"	v
+lgMs_arr	session_2/shmr.py	/^    lgMs_arr = lnMs_arr \/ np.log(10.0)$/;"	v
+lnMh_arr	session_2/shmr.py	/^    lnMh_arr = np.log(Mh_arr)$/;"	v
+lnMs_arr	session_2/shmr.py	/^    lnMs_arr = shmr.log_stellarmass_mean(lnMh_arr)$/;"	v
+load_hmf	session_2/hmf.py	/^def load_hmf(hmfdata='..\/data\/hmf.dat'):$/;"	f
+load_hmf	session_2/prob2d.py	/^from hmf import load_hmf$/;"	i
+log_halomass_mean	session_2/shmr.py	/^    def log_halomass_mean(self, lnMs):$/;"	m	class:SHMR
 loglikelihood	session_4/mcmc.py	/^def loglikelihood():$/;"	f
 logposteriror	session_4/mcmc.py	/^def logposteriror():$/;"	f
 m16path	session_1/read_m16.py	/^m16path = '..\/data\/M16\/'$/;"	v
 matplotlib	session_1/predict_ds.py	/^import matplotlib.pyplot as plt$/;"	i
 matplotlib	session_1/read_m16.py	/^import matplotlib.pyplot as plt$/;"	i
+matplotlib	session_2/hmf.py	/^import matplotlib.pyplot as plt$/;"	i
+matplotlib	session_2/prob2d.py	/^import matplotlib.pyplot as plt$/;"	i
 matplotlib	session_2/read_mock.py	/^import matplotlib.pyplot as plt$/;"	i
+matplotlib	session_2/shmr.py	/^import matplotlib.pyplot as plt$/;"	i
 matplotlib	session_3/quenching.py	/^import matplotlib.pyplot as plt$/;"	i
 matplotlib	session_4/mcmc.py	/^import matplotlib.pyplot as plt$/;"	i
 mockfile	session_2/read_mock.py	/^    mockfile = '\/Users\/ying\/Data\/ihodmock\/standard\/iHODcatalog_bolshoi.h5'$/;"	v
@@ -58,14 +78,20 @@ np	session_1/nfw.py	/^import numpy as np$/;"	i
 np	session_1/predict_ds.py	/^import numpy as np$/;"	i
 np	session_1/read_m16.py	/^import numpy as np$/;"	i
 np	session_1/task.py	/^import numpy as np$/;"	i
+np	session_2/hmf.py	/^import numpy as np$/;"	i
+np	session_2/prob2d.py	/^import numpy as np$/;"	i
 np	session_2/read_mock.py	/^import numpy as np$/;"	i
+np	session_2/shmr.py	/^import numpy as np$/;"	i
 np	session_3/quenching.py	/^import numpy as np$/;"	i
 np	session_4/mcmc.py	/^import numpy as np$/;"	i
 os	session_1/read_m16.py	/^import os.path$/;"	i
 path	session_1/read_m16.py	/^import os.path$/;"	i
 plt	session_1/predict_ds.py	/^import matplotlib.pyplot as plt$/;"	i
 plt	session_1/read_m16.py	/^import matplotlib.pyplot as plt$/;"	i
+plt	session_2/hmf.py	/^import matplotlib.pyplot as plt$/;"	i
+plt	session_2/prob2d.py	/^import matplotlib.pyplot as plt$/;"	i
 plt	session_2/read_mock.py	/^import matplotlib.pyplot as plt$/;"	i
+plt	session_2/shmr.py	/^import matplotlib.pyplot as plt$/;"	i
 plt	session_3/quenching.py	/^import matplotlib.pyplot as plt$/;"	i
 plt	session_4/mcmc.py	/^import matplotlib.pyplot as plt$/;"	i
 predict_ds	session_1/predict_ds.py	/^def predict_ds(rp, mass=1e13, c=6, rho_mean=52700242579.0, DELTA_HALO=200, h=0.7):$/;"	f
@@ -84,8 +110,10 @@ read_mock_hmf	session_3/quenching.py	/^from read_mock import read_mock, read_moc
 read_zm16_data	session_4/mcmc.py	/^def read_zm16_data(use_red=True):$/;"	f
 rho	session_1/task.py	/^def rho(mh,c):$/;"	f
 run_mcmchammer	session_4/mcmc.py	/^def run_mcmchammer():$/;"	f
+shmr	session_2/shmr.py	/^    shmr = SHMR()$/;"	v
 special	session_1/nfw.py	/^from scipy import special$/;"	i
 spline1d	session_1/nfw.py	/^from scipy.interpolate import InterpolatedUnivariateSpline as spline1d$/;"	i
+spline1d	session_2/shmr.py	/^from scipy.interpolate import InterpolatedUnivariateSpline as spline1d$/;"	i
 sys	session_3/quenching.py	/^import sys$/;"	i
 test_misc	session_3/quenching.py	/^def test_misc(mockfile):$/;"	f
 test_mock_fred	session_3/quenching.py	/^def test_mock_fred(mockfile, mhmin=1e9, mhmax=1e15, nmhbin=35):$/;"	f
